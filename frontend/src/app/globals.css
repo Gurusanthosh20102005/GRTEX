@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #283593;
+  --color-brand-light: #5f5fc4;
+  --color-brand-dark: #001064;
+  --color-accent: #E0C2A0;
+  --color-accent-light: #fff5d1;
+  --color-accent-dark: #ae9271;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 font-sans;
+  }
+}

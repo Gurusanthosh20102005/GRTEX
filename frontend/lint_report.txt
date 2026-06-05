@@ -1,0 +1,51 @@
+﻿
+> frontend@0.1.0 lint
+> eslint
+
+
+C:\Users\guru santhosh\OneDrive\Desktop\GRTEX\frontend\src\app\about\page.js
+  18:25  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\guru santhosh\OneDrive\Desktop\GRTEX\frontend\src\app\admin\dashboard\page.js
+  459:49  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\guru santhosh\OneDrive\Desktop\GRTEX\frontend\src\app\cart\page.js
+   48:76  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+  140:41  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\guru santhosh\OneDrive\Desktop\GRTEX\frontend\src\app\contact\page.js
+  13:62   error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  47:65   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  47:106  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  47:128  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+C:\Users\guru santhosh\OneDrive\Desktop\GRTEX\frontend\src\app\page.js
+  100:19  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\guru santhosh\OneDrive\Desktop\GRTEX\frontend\src\app\product\[id]\page.js
+   33:8   warning  React Hook useEffect has a missing dependency: 'fetchProductData'. Either include it or remove the dependency array                                                                                                                                                                      react-hooks/exhaustive-deps
+  157:29  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\guru santhosh\OneDrive\Desktop\GRTEX\frontend\src\app\shop\page.js
+   26:8   warning  React Hook useEffect has a missing dependency: 'applyFilters'. Either include it or remove the dependency array                                                                                                                                                                          react-hooks/exhaustive-deps
+  162:49  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\guru santhosh\OneDrive\Desktop\GRTEX\frontend\src\context\AuthContext.js
+  20:17  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  18 |         if (storedToken && storedUser) {
+  19 |             try {
+> 20 |                 setToken(storedToken);
+     |                 ^^^^^^^^ Avoid calling setState() directly within an effect
+  21 |                 setUser(JSON.parse(storedUser));
+  22 |             } catch (error) {
+  23 |                 console.error("Failed to parse user data", error);  react-hooks/set-state-in-effect
+
+Γ£û 14 problems (6 errors, 8 warnings)
+

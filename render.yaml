@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: grtex-backend
+    env: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+        placeholder: "Neon.tech PostgreSQL Connection String"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        sync: false
+        placeholder: "Vercel frontend deployment URL (e.g. https://grtex.vercel.app)"
