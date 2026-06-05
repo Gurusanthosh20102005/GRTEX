@@ -1,7 +1,34 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const bcrypt = require('bcryptjs');
+const { pool } = require('./config/db');
 require('dotenv').config();
+
+// Auto-seed/ensure admin user with admin role exists on startup
+async function autoSetupAdmin() {
+    try {
+        const userResult = await pool.query('SELECT * FROM users WHERE email = $1', ['admin@example.com']);
+        if (userResult.rows.length === 0) {
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash('admin123', salt);
+            await pool.query(
+                `INSERT INTO users (name, email, password, role)
+                 VALUES ($1, $2, $3, $4)`,
+                ['Admin User', 'admin@example.com', hashedPassword, 'admin']
+            );
+            console.log('Seeded default admin user: admin@example.com / admin123');
+        } else {
+            await pool.query(
+                `UPDATE users SET role = 'admin' WHERE email = 'admin@example.com'`
+            );
+            console.log('Ensured admin@example.com has admin role');
+        }
+    } catch (err) {
+        console.error('Error in autoSetupAdmin:', err);
+    }
+}
+autoSetupAdmin();
 
 const app = express();
 const port = process.env.PORT || 5000;
