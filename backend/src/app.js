@@ -5,25 +5,25 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// CORS Configuration - Allow localhost and the Vercel frontend URL dynamically
-const allowedOrigins = [
-    'http://localhost:3000',
-    process.env.FRONTEND_URL
-].filter(Boolean).map(url => url.replace(/\/$/, ''));
+// CORS Configuration - Allow localhost and Vercel domains dynamically
 
 app.use(cors({
     origin: (origin, callback) => {
         // Allow requests with no origin (like mobile apps or curl)
         if (!origin) return callback(null, true);
         
-        // Normalize origin by stripping trailing slash for comparison
         const normalizedOrigin = origin.replace(/\/$/, '');
         
-        if (allowedOrigins.indexOf(normalizedOrigin) === -1) {
-            const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-            return callback(new Error(msg), false);
+        // Dynamic matching logic
+        const isLocalhost = normalizedOrigin.startsWith('http://localhost:') || normalizedOrigin.startsWith('http://127.0.0.1:');
+        const isFrontendUrl = process.env.FRONTEND_URL && normalizedOrigin === process.env.FRONTEND_URL.replace(/\/$/, '');
+        const isVercelApp = normalizedOrigin.endsWith('.vercel.app') && normalizedOrigin.includes('grtex');
+        
+        if (isLocalhost || isFrontendUrl || isVercelApp) {
+            callback(null, true);
+        } else {
+            callback(null, false); // Disallow without throwing Express error
         }
-        return callback(null, true);
     },
     credentials: true
 }));
