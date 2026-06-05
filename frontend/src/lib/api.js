@@ -1,7 +1,14 @@
 import axios from 'axios';
 
+let baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+
+// Safety check: Auto-append '/api' suffix if the configured URL lacks it
+if (baseUrl && !baseUrl.endsWith('/api') && !baseUrl.endsWith('/api/')) {
+    baseUrl = baseUrl.replace(/\/$/, '') + '/api';
+}
+
 const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api',
+    baseURL: baseUrl,
 });
 
 // Add a request interceptor
