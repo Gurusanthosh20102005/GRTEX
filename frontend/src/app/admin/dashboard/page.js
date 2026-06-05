@@ -20,12 +20,16 @@ export default function AdminDashboard() {
         title: '', price: '', category: '', stock: '', image_url: '', description: '',
         colors: '', sizes: ''
     });
+    const [uploading, setUploading] = useState(false);
 
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem('user') || '{}');
-        // if (user.role !== 'admin') router.push('/'); 
-        fetchData();
-    }, []);
+        if (user.role !== 'admin') {
+            router.push('/');
+        } else {
+            fetchData();
+        }
+    }, [router]);
 
     const fetchData = async () => {
         try {
@@ -37,6 +41,30 @@ export default function AdminDashboard() {
             console.error(err);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formDataPayload = new FormData();
+        formDataPayload.append('image', file);
+
+        setUploading(true);
+        try {
+            const res = await api.post('/products/upload', formDataPayload, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            setProductForm(prev => ({ ...prev, image_url: res.data.imageUrl }));
+            alert('Image uploaded successfully!');
+        } catch (err) {
+            console.error(err);
+            alert(err.response?.data?.message || 'Failed to upload image. Ensure backend is running.');
+        } finally {
+            setUploading(false);
         }
     };
 
@@ -297,7 +325,17 @@ export default function AdminDashboard() {
                                 <input type="text" placeholder="Colors (comma separated)" className="border p-2 rounded" value={productForm.colors} onChange={e => setProductForm({ ...productForm, colors: e.target.value })} />
                                 <input type="text" placeholder="Sizes (comma separated)" className="border p-2 rounded" value={productForm.sizes} onChange={e => setProductForm({ ...productForm, sizes: e.target.value })} />
 
-                                <input type="text" placeholder="Image URL" className="border p-2 rounded col-span-2" value={productForm.image_url} onChange={e => setProductForm({ ...productForm, image_url: e.target.value })} />
+                                <div className="col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-xs font-semibold text-gray-500 mb-1">Image URL</label>
+                                        <input type="text" placeholder="Paste image URL here" className="border p-2 rounded w-full text-sm" value={productForm.image_url} onChange={e => setProductForm({ ...productForm, image_url: e.target.value })} />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-semibold text-gray-500 mb-1">Or Upload File from Device</label>
+                                        <input type="file" accept="image/*" className="border p-1 rounded w-full text-sm file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-brand file:text-white hover:file:bg-brand-dark cursor-pointer" onChange={handleImageUpload} disabled={uploading} />
+                                        {uploading && <span className="text-xs text-brand mt-1 block">Uploading file, please wait...</span>}
+                                    </div>
+                                </div>
                                 <textarea placeholder="Description" className="border p-2 rounded col-span-2" rows="2" value={productForm.description} onChange={e => setProductForm({ ...productForm, description: e.target.value })}></textarea>
 
                                 <div className="col-span-2 flex gap-2">

@@ -55,16 +55,16 @@ const getProductById = async (req, res) => {
 
 const createProduct = async (req, res) => {
     try {
-        const { title, description, price, category, material, color, colors, image_url, stock } = req.body;
+        const { title, description, price, category, material, color, colors, sizes, image_url, stock } = req.body;
 
         // Sanitize numeric fields
         const safePrice = price === '' || price === undefined ? 0 : price;
         const safeStock = stock === '' || stock === undefined ? 0 : stock;
 
         const result = await pool.query(
-            `INSERT INTO products (title, description, price, category, material, color, colors, image_url, stock)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
-            [title, description, safePrice, category, material, color, colors, image_url, safeStock]
+            `INSERT INTO products (title, description, price, category, material, color, colors, sizes, image_url, stock)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
+            [title, description, safePrice, category, material, color, colors, sizes, image_url, safeStock]
         );
         res.status(201).json(result.rows[0]);
     } catch (error) {
@@ -76,21 +76,13 @@ const createProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, description, price, category, stock, colors } = req.body;
+        const { title, description, price, category, stock, colors, sizes } = req.body;
 
         // Sanitize numeric fields - Use NULL for updates if you want to keep existing, but here we replace if provided.
-        // If undefined, COALESCE handles it. If empty string, we want 0 or it might crash COALESCE($5, stock) if $5 is "" text cast to int?
-        // Postgres: COALESCE(?, stock) -> if ? is NULL, use stock.
-        // If ? is "", it tries to cast "" to type of stock (int) -> Error.
-        // So we must convert "" to NULL or 0.
-
         const safePrice = price === '' ? null : price;
         const safeStock = stock === '' ? null : stock;
         const safeColors = colors === '' ? null : colors;
-
-        // Note: COALESCE(NULL, old_val) keeps old_val.
-        // So passing null for empty string means "don't update". 
-        // If user INTENDS to set to 0, they should send "0" or 0.
+        const safeSizes = sizes === '' ? null : sizes;
 
         const result = await pool.query(
             `UPDATE products 
@@ -99,9 +91,10 @@ const updateProduct = async (req, res) => {
            price = COALESCE($3, price), 
            category = COALESCE($4, category), 
            stock = COALESCE($5, stock),
-           colors = COALESCE($6, colors)
-       WHERE id = $7 RETURNING *`,
-            [title, description, safePrice, category, safeStock, safeColors, id]
+           colors = COALESCE($6, colors),
+           sizes = COALESCE($7, sizes)
+       WHERE id = $8 RETURNING *`,
+            [title, description, safePrice, category, safeStock, safeColors, safeSizes, id]
         );
         if (result.rows.length === 0) return res.status(404).json({ message: 'Product not found' });
         res.json(result.rows[0]);
